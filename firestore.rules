@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para la colección principal de usuarios
+    match /users/{userId} {
+      // Cualquier usuario autenticado puede leer los perfiles (para búsqueda de contactos)
+      allow read: if request.auth != null;
+      
+      // Solo el propietario puede crear o modificar su propio documento de perfil
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      
+      // Por seguridad inicial, no permitimos eliminar perfiles directamente desde el cliente
+      allow delete: if false;
+    }
+    
+    // Reglas para la colección de nombres de usuario únicos
+    match /usernames/{username} {
+      // Cualquier usuario autenticado puede comprobar si un username existe
+      allow read: if request.auth != null;
+      
+      // Permite crear un username SOLO si el documento no existe (Create) 
+      // y el userId asociado en el documento es exactamente el UID del usuario que lo crea
+      allow create: if request.auth != null 
+                    && request.resource.data.userId == request.auth.uid;
+      
+      // Permite actualizar o eliminar el username SOLO si ya le pertenece al usuario 
+      // (resource.data.userId debe coincidir con su UID)
+      allow update, delete: if request.auth != null 
+                            && resource.data.userId == request.auth.uid 
+                            && request.resource.data.userId == request.auth.uid;
+    }
+    
+  }
+}

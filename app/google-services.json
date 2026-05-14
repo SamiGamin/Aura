@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1050856131352",
+    "firebase_url": "https://auramjs-default-rtdb.firebaseio.com",
+    "project_id": "auramjs",
+    "storage_bucket": "auramjs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050856131352:android:a64eab851e11531f792c6d",
+        "android_client_info": {
+          "package_name": "com.stokia.aura"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050856131352-hbf13ln57oiria1d5eqhhgjj7s3o607l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgEDiZyQSXbiV7D5ipCcxm2k4H7M_txjE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050856131352-hbf13ln57oiria1d5eqhhgjj7s3o607l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
