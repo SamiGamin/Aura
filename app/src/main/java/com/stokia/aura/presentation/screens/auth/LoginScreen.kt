@@ -100,7 +100,7 @@ fun LoginScreen(
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Authenticated -> {
-                navController.navigate(Routes.ChatList.route) {
+                navController.navigate(Routes.ContactsList.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
             }

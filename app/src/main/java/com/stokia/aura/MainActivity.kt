@@ -27,12 +27,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             AuraTheme {
                 val navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AuraNavGraph(
-                        navController = navController,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AuraNavGraph(
+                    navController = navController,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

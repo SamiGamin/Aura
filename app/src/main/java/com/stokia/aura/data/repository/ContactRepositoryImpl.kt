@@ -25,29 +25,29 @@ class ContactRepositoryImpl @Inject constructor(
             // 1. Obtener el UID asociado al username
             val usernameDoc = firestore.collection("usernames").document(cleanUsername).get().await()
             if (!usernameDoc.exists()) {
-                return AuraResult.Error(Exception("Usuario no encontrado"))
+                return AuraResult.Failure("Usuario no encontrado")
             }
             
-            val targetUid = usernameDoc.getString("userId") ?: return AuraResult.Error(Exception("Datos corruptos en username"))
+            val targetUid = usernameDoc.getString("userId") ?: return AuraResult.Failure("Datos corruptos en username")
             
             // 2. Obtener el perfil del usuario
             val userDoc = firestore.collection("users").document(targetUid).get().await()
             val auraUser = userDoc.toObject(AuraUser::class.java)
-                ?: return AuraResult.Error(Exception("Perfil no encontrado"))
+                ?: return AuraResult.Failure("Perfil no encontrado")
                 
             AuraResult.Success(auraUser)
         } catch (e: Exception) {
-            AuraResult.Error(e)
+            AuraResult.Failure(e.message ?: "Error", e)
         }
     }
 
     override suspend fun addContact(targetUid: String): AuraResult<Unit> {
         return try {
-            val myUid = authRepository.getCurrentUserUid() 
-                ?: return AuraResult.Error(Exception("No autenticado"))
+            val myUid = authRepository.getCurrentUserId() 
+                ?: return AuraResult.Failure("No autenticado")
                 
             if (myUid == targetUid) {
-                return AuraResult.Error(Exception("No puedes agregarte a ti mismo"))
+                return AuraResult.Failure("No puedes agregarte a ti mismo")
             }
 
             val contactData = mapOf(
@@ -63,12 +63,12 @@ class ContactRepositoryImpl @Inject constructor(
 
             AuraResult.Success(Unit)
         } catch (e: Exception) {
-            AuraResult.Error(e)
+            AuraResult.Failure(e.message ?: "Error", e)
         }
     }
 
     override fun observeContacts(): Flow<List<AuraUser>> = callbackFlow {
-        val myUid = authRepository.getCurrentUserUid()
+        val myUid = authRepository.getCurrentUserId()
         if (myUid == null) {
             trySend(emptyList())
             close()
@@ -89,7 +89,7 @@ class ContactRepositoryImpl @Inject constructor(
                     return@addSnapshotListener
                 }
 
-                // Extraemos los UIDs de nuestros contactos
+                // Extraemos los  de nuestros contactos
                 val contactUids = snapshot.documents.map { it.id }
 
                 // TODO: En producción con más de 30 contactos, se debe usar chunks de 30 o escuchar cambios individuales.

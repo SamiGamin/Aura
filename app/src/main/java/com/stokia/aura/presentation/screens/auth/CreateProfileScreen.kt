@@ -1,4 +1,5 @@
 @file:Suppress("DEPRECATION")
+
 package com.stokia.aura.presentation.screens.auth
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -105,7 +106,7 @@ fun CreateProfileScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is ProfileUiState.Success) {
-            navController.navigate(Routes.ChatList.route) {
+            navController.navigate(Routes.ContactsList.route) {
                 popUpTo(Routes.CreateProfile.route) { inclusive = true }
             }
         }
@@ -136,7 +137,7 @@ fun CreateProfileScreen(
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                
+
                 // --- PREMIUM HEADER (COVER + AVATAR) ---
                 Box(
                     modifier = Modifier
@@ -181,7 +182,11 @@ fun CreateProfileScreen(
                                     modifier = Modifier.size(32.dp)
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("Toca para añadir portada", color = AuraTextMuted, fontSize = 12.sp)
+                                Text(
+                                    "Toca para añadir portada",
+                                    color = AuraTextMuted,
+                                    fontSize = 12.sp
+                                )
                             }
                         }
                     }
@@ -259,7 +264,12 @@ fun CreateProfileScreen(
                             .background(AuraCardSurface.copy(alpha = 0.6f))
                             .border(
                                 width = 1.dp,
-                                brush = Brush.linearGradient(listOf(AuraGlassBorder, Color.Transparent)),
+                                brush = Brush.linearGradient(
+                                    listOf(
+                                        AuraGlassBorder,
+                                        Color.Transparent
+                                    )
+                                ),
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .padding(24.dp),
@@ -269,23 +279,53 @@ fun CreateProfileScreen(
                             value = displayName,
                             onValueChange = { viewModel.onDisplayNameChange(it) },
                             label = "Nombre a mostrar",
-                            leadingIcon = { Icon(Icons.Default.Person, null, tint = AuraTextMuted) },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Person,
+                                    null,
+                                    tint = AuraTextMuted
+                                )
+                            },
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            })
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         AuraTextField(
                             value = username,
-                            onValueChange = { viewModel.onUsernameChange(it) },
+                            onValueChange = {
+                                viewModel.onUsernameChange(
+                                    it.replaceFirstChar { char ->
+                                        if (char.isLowerCase()) {
+                                            char.titlecase()
+                                        } else {
+                                            char.toString()
+                                        }
+                                    }
+                                )
+                            },
                             label = "Nombre de usuario único (@)",
-                            leadingIcon = { Icon(Icons.Default.AlternateEmail, null, tint = AuraTextMuted) },
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = {
-                                focusManager.clearFocus()
-                                viewModel.saveProfile()
-                            })
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.AlternateEmail,
+                                    null,
+                                    tint = AuraTextMuted
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusManager.clearFocus()
+                                    viewModel.saveProfile()
+                                }
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))

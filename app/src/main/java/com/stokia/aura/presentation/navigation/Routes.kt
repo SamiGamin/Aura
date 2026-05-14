@@ -23,6 +23,6 @@ sealed class Routes(val route: String) {
         fun createRoute(userId: String): String = "user_profile/$userId"
     }
     data object Settings : Routes("settings")
-    data object QrScanner : Routes("qr_scanner")
-    data object QrDisplay : Routes("qr_display")
+    data object ContactsList : Routes("contacts_list")
+    data object AddContact : Routes("add_contact")
 }

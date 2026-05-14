@@ -26,7 +26,7 @@ cloudinary = "3.1.2"
 imageCropper = "4.7.0"
 zxingCore = "3.5.3"
 camerax = "1.4.0"
-mlkitBarcode = "17.2.0"
+mlkitBarcode = "17.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

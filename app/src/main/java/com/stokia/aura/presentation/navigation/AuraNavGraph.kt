@@ -17,7 +17,8 @@ import com.stokia.aura.presentation.screens.auth.RegisterScreen
 import com.stokia.aura.presentation.screens.auth.SplashScreen
 
 import com.stokia.aura.presentation.screens.auth.CreateProfileScreen
-
+import com.stokia.aura.presentation.screens.contacts.AddContactScreen
+import com.stokia.aura.presentation.screens.contacts.ContactsListScreen
 /**
  * Main navigation graph for the Aura application.
  * Defines all composable destinations and transition animations.
@@ -101,12 +102,12 @@ fun AuraNavGraph(
             // TODO: SettingsScreen(navController)
         }
 
-        composable(Routes.QrScanner.route) {
-            // TODO: QrScannerScreen(navController)
+        composable(Routes.ContactsList.route) {
+            ContactsListScreen(navController)
         }
 
-        composable(Routes.QrDisplay.route) {
-            // TODO: QrDisplayScreen(navController)
+        composable(Routes.AddContact.route) {
+            AddContactScreen(navController)
         }
     }
 }

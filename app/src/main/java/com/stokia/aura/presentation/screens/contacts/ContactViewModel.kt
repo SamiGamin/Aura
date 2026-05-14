@@ -7,6 +7,7 @@ import com.stokia.aura.domain.model.AuraUser
 import com.stokia.aura.domain.model.AuthState
 import com.stokia.aura.domain.repository.AuthRepository
 import com.stokia.aura.domain.repository.ContactRepository
+import com.stokia.aura.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactViewModel @Inject constructor(
     private val contactRepository: ContactRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _contacts = MutableStateFlow<List<AuraUser>>(emptyList())
@@ -33,6 +35,12 @@ class ContactViewModel @Inject constructor(
     private val _searchResult = MutableStateFlow<AuraResult<AuraUser>?>(null)
     val searchResult: StateFlow<AuraResult<AuraUser>?> = _searchResult.asStateFlow()
 
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
+
+    private val _isAddingContact = MutableStateFlow(false)
+    val isAddingContact: StateFlow<Boolean> = _isAddingContact.asStateFlow()
+
     init {
         observeCurrentUser()
         observeContacts()
@@ -40,9 +48,14 @@ class ContactViewModel @Inject constructor(
 
     private fun observeCurrentUser() {
         viewModelScope.launch {
-            authRepository.observeAuthState().collectLatest { state ->
-                if (state is AuthState.Authenticated) {
-                    _currentUser.value = state.user
+            authRepository.observeAuthState().collectLatest { authUser ->
+                if (authUser != null) {
+                    val result = userRepository.getUserById(authUser.uid)
+                    if (result is AuraResult.Success) {
+                        _currentUser.value = result.data
+                    } else {
+                        _currentUser.value = null
+                    }
                 } else {
                     _currentUser.value = null
                 }
@@ -60,17 +73,19 @@ class ContactViewModel @Inject constructor(
 
     fun searchUserByUsername(username: String) {
         viewModelScope.launch {
-            _searchResult.value = AuraResult.Loading
+            _isSearching.value = true
             val result = contactRepository.searchUserByUsername(username)
             _searchResult.value = result
+            _isSearching.value = false
         }
     }
 
     fun addContactByUid(uid: String) {
         viewModelScope.launch {
-            _addContactResult.value = AuraResult.Loading
+            _isAddingContact.value = true
             val result = contactRepository.addContact(uid)
             _addContactResult.value = result
+            _isAddingContact.value = false
         }
     }
 
